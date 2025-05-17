@@ -34,12 +34,66 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.androidbroadcast.smartstudy.R
 import dev.androidbroadcast.smartstudy.domain.model.Subject
+import dev.androidbroadcast.smartstudy.domain.model.Task
 import dev.androidbroadcast.smartstudy.presentation.components.CountCard
 import dev.androidbroadcast.smartstudy.presentation.components.SubjectCard
+import dev.androidbroadcast.smartstudy.presentation.components.taskList
 import java.nio.file.WatchEvent
 
 @Composable
 fun DashboardScreen() {
+
+    val subjects = listOf(
+        Subject("English", 10f, Subject.subjectCardColors[0]),
+        Subject("Physics", 10f, Subject.subjectCardColors[1]),
+        Subject("Maths", 10f, Subject.subjectCardColors[2]),
+        Subject("Geography", 10f, Subject.subjectCardColors[3]),
+        Subject("Chemistry", 10f, Subject.subjectCardColors[4]),
+    )
+
+    val tasks = listOf(
+        Task(
+            title = "Prepare notes",
+            description = "",
+            dueDate = 0L,
+            priority = 1,
+            relatedToSubject = "",
+            isComplete = false
+        ),
+        Task(
+            title = "Do homework",
+            description = "",
+            dueDate = 0L,
+            priority = 1,
+            relatedToSubject = "",
+            isComplete = true
+        ),
+        Task(
+            title = "Go Coaching",
+            description = "",
+            dueDate = 0L,
+            priority = 1,
+            relatedToSubject = "",
+            isComplete = true
+        ),
+        Task(
+            title = "Assignment",
+            description = "",
+            dueDate = 0L,
+            priority = 1,
+            relatedToSubject = "",
+            isComplete = false
+        ),
+        Task(
+            title = "Make dinner",
+            description = "",
+            dueDate = 0L,
+            priority = 1,
+            relatedToSubject = "",
+            isComplete = true
+        ),
+    )
+
     Scaffold(
         topBar = { DashboardScreenTopBar() }
     ) { paddingValues ->
@@ -61,7 +115,7 @@ fun DashboardScreen() {
             item {
                 SubjectCardsSection(
                     modifier = Modifier.fillMaxWidth(),
-                    subjectList = emptyList(),
+                    subjectList = subjects,
                 )
             }
             item {
@@ -74,6 +128,12 @@ fun DashboardScreen() {
                     Text(text = "Start Study Session")
                 }
             }
+            taskList(
+                sectionTitle = "UPCOMING TASKS",
+                emptyListText = "You don't have any upcoming tasks. \n" +
+                        "Click the + button in subject screen to add new task.",
+                tasks = tasks
+            )
         }
     }
 }
