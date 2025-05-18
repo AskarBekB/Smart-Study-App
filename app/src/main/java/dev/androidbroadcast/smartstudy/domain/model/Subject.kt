@@ -10,7 +10,8 @@ import dev.androidbroadcast.smartstudy.presentation.theme.gradient5
 data class Subject(
     val name: String,
     val goalHours: Float,
-    val colors: List<Color>
+    val colors: List<Color>,
+    val subjectId: Int
 ) {
 
     companion object {
