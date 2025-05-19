@@ -36,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.androidbroadcast.smartstudy.R
 import dev.androidbroadcast.smartstudy.domain.model.Session
@@ -44,10 +43,10 @@ import dev.androidbroadcast.smartstudy.domain.model.Subject
 import dev.androidbroadcast.smartstudy.domain.model.Task
 import dev.androidbroadcast.smartstudy.presentation.components.AddSubjectDialog
 import dev.androidbroadcast.smartstudy.presentation.components.CountCard
+import dev.androidbroadcast.smartstudy.presentation.components.DeleteDialog
 import dev.androidbroadcast.smartstudy.presentation.components.SubjectCard
 import dev.androidbroadcast.smartstudy.presentation.components.studySessionsList
 import dev.androidbroadcast.smartstudy.presentation.components.taskList
-import java.nio.file.WatchEvent
 
 @Composable
 fun DashboardScreen() {
@@ -154,6 +153,7 @@ fun DashboardScreen() {
     )
 
     var isAddSubjectDialogOpen by rememberSaveable { mutableStateOf(false) }
+    var isDeleteSessionDialogOpen by rememberSaveable { mutableStateOf(false) }
 
     var subjectName by remember { mutableStateOf("") }
     var goalHours by remember { mutableStateOf("") }
@@ -173,6 +173,16 @@ fun DashboardScreen() {
             isAddSubjectDialogOpen = false
         }
     )
+
+    DeleteDialog(
+        isOpen = isDeleteSessionDialogOpen,
+        title = "Delete Session",
+        bodyText = "Are you sure, you want to delete this session? Your studied hours will be reduced. " +
+                "by this session time.",
+        onDismissRequest = { isDeleteSessionDialogOpen = false },
+        onConfirmButtonClick = { isDeleteSessionDialogOpen = false}
+    )
+
     Scaffold(
         topBar = { DashboardScreenTopBar() }
     ) { paddingValues ->
@@ -224,7 +234,7 @@ fun DashboardScreen() {
                 emptyListText = "You don't have any recent study sessions.\n" +
                 "Start a study session so begin recording your progress.",
                 sessions = sessions ,
-                onClickDelete = {}
+                onClickDelete = { isDeleteSessionDialogOpen = true }
             )
         }
     }
