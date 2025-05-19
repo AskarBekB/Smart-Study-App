@@ -20,6 +20,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
@@ -41,6 +45,24 @@ fun AddSubjectDialog(
     onDismissRequest: () -> Unit,
     onConfirmButtonClick: () -> Unit,
 ) {
+
+    var subjectNameError by rememberSaveable { mutableStateOf<String?>(null) }
+    var goalHoursError by rememberSaveable { mutableStateOf<String?>(null) }
+
+    subjectNameError = when {
+        subjectName.isBlank() -> "Please enter subject name."
+        subjectName.length < 2 -> "Subject name is too short."
+        subjectName.length > 20 -> "Subject name is too long."
+        else -> null
+    }
+
+    goalHoursError = when {
+        goalHours.isBlank() -> "Please enter goal study hours."
+        goalHours.toFloatOrNull() == null -> "Invalid number."
+        goalHours.toFloat() < 1f -> "Please set at least 1 hour."
+        goalHours.toFloat() > 1000f -> "Please set a minimum of 1000 hours."
+        else -> null
+    }
 
     if (isOpen) {
         AlertDialog(
@@ -73,7 +95,9 @@ fun AddSubjectDialog(
                         value = subjectName,
                         onValueChange = onSubjectNameChange,
                         label = { Text("Subject Name")},
-                        singleLine = true
+                        singleLine = true,
+                        isError = subjectNameError != null && subjectName.isNotBlank(),
+                        supportingText = { Text(subjectNameError.orEmpty())}
                     )
                     Spacer(modifier = Modifier.height(10.dp))
                     OutlinedTextField(
@@ -81,6 +105,8 @@ fun AddSubjectDialog(
                         onValueChange = onGoalHoursChange,
                         label = { Text("Goal Study Hours")},
                         singleLine = true,
+                        isError = goalHoursError != null && goalHours.isNotBlank(),
+                        supportingText = { Text(goalHoursError.orEmpty())},
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
                 }
@@ -91,7 +117,10 @@ fun AddSubjectDialog(
                 }
             },
             confirmButton = {
-                TextButton(onClick = onConfirmButtonClick) {
+                TextButton(
+                    onClick = onConfirmButtonClick,
+                    enabled = subjectNameError == null && goalHoursError == null
+                ) {
                     Text("Save")
                 }
             }
