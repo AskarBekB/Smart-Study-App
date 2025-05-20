@@ -8,6 +8,7 @@ import dev.androidbroadcast.smartstudy.domain.model.Session
 import dev.androidbroadcast.smartstudy.domain.model.Subject
 import dev.androidbroadcast.smartstudy.domain.model.Task
 import dev.androidbroadcast.smartstudy.presentation.dashboard.DashboardScreen
+import dev.androidbroadcast.smartstudy.presentation.session.SessionScreen
 import dev.androidbroadcast.smartstudy.presentation.subject.SubjectScreen
 import dev.androidbroadcast.smartstudy.presentation.task.TaskScreen
 import dev.androidbroadcast.smartstudy.presentation.theme.SmartStudyTheme
@@ -18,7 +19,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SmartStudyTheme {
-                TaskScreen()
+                SessionScreen()
             }
         }
     }
