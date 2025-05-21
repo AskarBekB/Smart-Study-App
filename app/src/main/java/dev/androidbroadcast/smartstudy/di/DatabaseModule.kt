@@ -18,6 +18,7 @@ object DatabaseModule {
 
 
     @Provides
+    @Singleton
     fun provideDatabase(
         application: Application
     ): AppDatabase {
@@ -25,27 +26,26 @@ object DatabaseModule {
             .databaseBuilder(
                 application,
                 AppDatabase::class.java,
-                "smartdb.db"
+                "studysmart.db"
             )
             .build()
     }
 
-
     @Provides
     @Singleton
-    fun provideSubjectDao(database: AppDatabase): SubjectDao{
+    fun provideSubjectDao(database: AppDatabase): SubjectDao {
         return database.subjectDao()
     }
 
     @Provides
     @Singleton
-    fun provideTaskDao(database: AppDatabase): TaskDao{
+    fun provideTaskDaoDao(database: AppDatabase): TaskDao {
         return database.taskDao()
     }
 
     @Provides
     @Singleton
-    fun provideSessionDao(database: AppDatabase): SessionDao{
+    fun provideSessionDao(database: AppDatabase): SessionDao {
         return database.sessionDao()
     }
 }

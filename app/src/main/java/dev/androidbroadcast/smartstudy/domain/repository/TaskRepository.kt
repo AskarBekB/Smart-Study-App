@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface TaskRepository {
 
-
     suspend fun upsertTask(task: Task)
 
     suspend fun deleteTask(taskId: Int)
@@ -16,5 +15,5 @@ interface TaskRepository {
 
     fun getCompleteTaskForSubject(subjectInt: Int): Flow<List<Task>>
 
-    fun getAllUpComingTasks(): Flow<List<Task>>
- }
+    fun getAllUpcomingTasks(): Flow<List<Task>>
+}

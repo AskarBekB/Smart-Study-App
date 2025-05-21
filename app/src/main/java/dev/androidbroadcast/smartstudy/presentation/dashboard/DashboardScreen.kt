@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.NavGraph
 import com.ramcosta.composedestinations.annotation.RootNavGraph
@@ -68,6 +69,7 @@ import dev.androidbroadcast.smartstudy.tasks
 fun DashboardScreenRoute(
     navigator: DestinationsNavigator
 ) {
+    val dashboardViewModel: DashboardViewModel = hiltViewModel()
     DashboardScreen(
         onSubjectCardClick = { subjectId ->
             subjectId?.let {

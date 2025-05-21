@@ -1,6 +1,5 @@
 package dev.androidbroadcast.smartstudy.domain.repository
 
-import androidx.lifecycle.LiveData
 import dev.androidbroadcast.smartstudy.domain.model.Subject
 import kotlinx.coroutines.flow.Flow
 
@@ -16,5 +15,5 @@ interface SubjectRepository {
 
     suspend fun getSubjectById(subjectInt: Int): Subject?
 
-    fun getAllSubjects(): Flow<LiveData<Subject>>
+    fun getAllSubjects(): Flow<List<Subject>>
 }

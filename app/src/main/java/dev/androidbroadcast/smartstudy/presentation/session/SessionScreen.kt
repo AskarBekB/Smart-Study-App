@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.androidbroadcast.smartstudy.presentation.components.DeleteDialog
@@ -48,6 +49,8 @@ import kotlinx.coroutines.launch
 fun SessionScreenRoute(
     navigator: DestinationsNavigator
 ) {
+    val viewModel: SessionViewModel = hiltViewModel()
+
     SessionScreen(
         onBackButtonClick = { navigator.navigateUp() }
     )
@@ -57,7 +60,6 @@ fun SessionScreenRoute(
 private fun SessionScreen(
     onBackButtonClick: () -> Unit
 ) {
-
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState()
     var isBottomSheetOpen by remember { mutableStateOf(false) }

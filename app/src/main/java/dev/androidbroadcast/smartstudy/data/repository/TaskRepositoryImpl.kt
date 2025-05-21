@@ -29,7 +29,7 @@ class TaskRepositoryImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    override fun getAllUpComingTasks(): Flow<List<Task>> {
+    override fun getAllUpcomingTasks(): Flow<List<Task>> {
         TODO("Not yet implemented")
     }
 }

@@ -15,7 +15,7 @@ data class Subject(
     val goalHours: Float,
     val colors: List<Color>,
     @PrimaryKey(autoGenerate = true)
-    val subjectId: Int
+    val subjectId: Int? = null
 ) {
 
     companion object {

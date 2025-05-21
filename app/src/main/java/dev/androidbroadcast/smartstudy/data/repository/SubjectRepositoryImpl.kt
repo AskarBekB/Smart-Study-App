@@ -30,7 +30,7 @@ class SubjectRepositoryImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    override fun getAllSubjects(): Flow<LiveData<Subject>> {
+    override fun getAllSubjects(): Flow<List<Subject>> {
         TODO("Not yet implemented")
     }
 }
