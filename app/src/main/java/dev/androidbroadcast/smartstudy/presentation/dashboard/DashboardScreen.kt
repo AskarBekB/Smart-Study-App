@@ -37,6 +37,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.NavGraph
+import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.androidbroadcast.smartstudy.R
 import dev.androidbroadcast.smartstudy.domain.model.Session
 import dev.androidbroadcast.smartstudy.domain.model.Subject
@@ -47,12 +51,46 @@ import dev.androidbroadcast.smartstudy.presentation.components.DeleteDialog
 import dev.androidbroadcast.smartstudy.presentation.components.SubjectCard
 import dev.androidbroadcast.smartstudy.presentation.components.studySessionsList
 import dev.androidbroadcast.smartstudy.presentation.components.taskList
+import dev.androidbroadcast.smartstudy.presentation.destinations.SessionScreenRouteDestination
+import dev.androidbroadcast.smartstudy.presentation.destinations.SubjectScreenRouteDestination
+import dev.androidbroadcast.smartstudy.presentation.destinations.TaskScreenRouteDestination
+import dev.androidbroadcast.smartstudy.presentation.navArgs
+import dev.androidbroadcast.smartstudy.presentation.subject.SubjectScreenNavArgs
+import dev.androidbroadcast.smartstudy.presentation.task.TaskScreenNavArgs
 import dev.androidbroadcast.smartstudy.sessions
 import dev.androidbroadcast.smartstudy.subjects
 import dev.androidbroadcast.smartstudy.tasks
 
+
+// For navigation
+@Destination(start = true)
 @Composable
-fun DashboardScreen() {
+fun DashboardScreenRoute(
+    navigator: DestinationsNavigator
+) {
+    DashboardScreen(
+        onSubjectCardClick = { subjectId ->
+            subjectId?.let {
+                val navArg = SubjectScreenNavArgs(subjectId  = subjectId)
+                navigator.navigate(SubjectScreenRouteDestination(navArgs = navArg))
+            }
+        },
+        onTaskCardClick = { taskId ->
+            val navArg = TaskScreenNavArgs(taskId = taskId, subjectId = null)
+            navigator.navigate(TaskScreenRouteDestination(navArgs = navArg))
+        },
+        onStartSessionButtonClick = {
+            navigator.navigate(SessionScreenRouteDestination())
+        }
+    )
+}
+
+@Composable
+private fun DashboardScreen(
+    onSubjectCardClick: (Int?) -> Unit,
+    onTaskCardClick: (Int?) -> Unit,
+    onStartSessionButtonClick: () -> Unit,
+) {
 
     var isAddSubjectDialogOpen by rememberSaveable { mutableStateOf(false) }
     var isDeleteSessionDialogOpen by rememberSaveable { mutableStateOf(false) }
@@ -107,12 +145,13 @@ fun DashboardScreen() {
                 SubjectCardsSection(
                     modifier = Modifier.fillMaxWidth(),
                     subjectList = subjects,
-                    onAddIconClicked = { isAddSubjectDialogOpen = true }
+                    onAddIconClicked = { isAddSubjectDialogOpen = true },
+                    onSubjectCardClick = onSubjectCardClick
                 )
             }
             item {
                 Button(
-                    onClick = { TODO() },
+                    onClick = onStartSessionButtonClick,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 48.dp, vertical = 20.dp)
@@ -126,7 +165,7 @@ fun DashboardScreen() {
                         "Click the + button in subject screen to add new task.",
                 tasks = tasks,
                 onCheckBoxClick = {},
-                onTaskCardClick = {}
+                onTaskCardClick = onTaskCardClick
             )
             item {
                 Spacer(modifier = Modifier.height(20.dp))
@@ -189,7 +228,8 @@ private fun SubjectCardsSection(
     modifier: Modifier,
     subjectList: List<Subject>,
     emptyListText: String = "You don't have any subjects. \n Click the + button to add new subjects",
-    onAddIconClicked: () -> Unit
+    onAddIconClicked: () -> Unit,
+    onSubjectCardClick: (Int?) -> Unit
 ){
     Column(modifier = modifier) {
         Row(
@@ -235,7 +275,7 @@ private fun SubjectCardsSection(
                 SubjectCard(
                     subjectName = subject.name,
                     gradientColors = subject.colors,
-                    onClick = {}
+                    onClick = { onSubjectCardClick(subject.subjectId)}
                 )
             }
         }
