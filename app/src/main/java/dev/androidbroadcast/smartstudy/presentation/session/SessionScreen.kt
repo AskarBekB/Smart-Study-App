@@ -1,4 +1,6 @@
 package dev.androidbroadcast.smartstudy.presentation.session
+import android.content.Intent
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,34 +35,59 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ramcosta.composedestinations.annotation.DeepLink
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.androidbroadcast.smartstudy.presentation.components.DeleteDialog
 import dev.androidbroadcast.smartstudy.presentation.components.SubjectListBottomSheet
 import dev.androidbroadcast.smartstudy.presentation.components.studySessionsList
+import dev.androidbroadcast.smartstudy.presentation.components.timerTextAnimation
+import dev.androidbroadcast.smartstudy.presentation.theme.Red
 import dev.androidbroadcast.smartstudy.sessions
 import dev.androidbroadcast.smartstudy.subjects
+import dev.androidbroadcast.smartstudy.util.Constants.ACTION_SERVICE_CANCEL
+import dev.androidbroadcast.smartstudy.util.Constants.ACTION_SERVICE_START
+import dev.androidbroadcast.smartstudy.util.Constants.ACTION_SERVICE_STOP
 import kotlinx.coroutines.launch
 
-@Destination
+@Destination(
+    deepLinks = [
+        DeepLink(
+            action = Intent.ACTION_VIEW,
+            uriPattern = "smart_study://dashboard/session"
+        )
+    ]
+)
+
 @Composable
 fun SessionScreenRoute(
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
+    timerService: StudySessionTimerService
 ) {
     val viewModel: SessionViewModel = hiltViewModel()
 
     SessionScreen(
-        onBackButtonClick = { navigator.navigateUp() }
+        onBackButtonClick = { navigator.navigateUp() },
+        timerService = timerService
     )
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SessionScreen(
-    onBackButtonClick: () -> Unit
+    onBackButtonClick: () -> Unit,
+    timerService: StudySessionTimerService
 ) {
+    val hours by timerService.hours
+    val minutes by timerService.minutes
+    val seconds by timerService.seconds
+    val currentTimerState by timerService.currentTimerState
+
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState()
     var isBottomSheetOpen by remember { mutableStateOf(false) }
@@ -104,7 +132,10 @@ private fun SessionScreen(
                 TimerSection(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(1f)
+                        .aspectRatio(1f),
+                    hours = hours,
+                    minutes = minutes,
+                    seconds = seconds
                 )
             }
             item {
@@ -121,9 +152,23 @@ private fun SessionScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(12.dp),
-                    startButtonClick = { },
-                    cancelButtonClick = { },
-                    finishButtonClick = { }
+                    startButtonClick = {
+                        ServiceHelper.triggerForegroundService(
+                            context = context,
+                            action = if (currentTimerState == TimerState.STARTED) {
+                                ACTION_SERVICE_STOP
+                            } else ACTION_SERVICE_START
+                        )
+                    },
+                    cancelButtonClick = {
+                        ServiceHelper.triggerForegroundService(
+                            context = context,
+                            action = ACTION_SERVICE_CANCEL
+                        )
+                    },
+                    finishButtonClick = { },
+                    timerState = currentTimerState,
+                    seconds = seconds
                 )
             }
             studySessionsList(
@@ -159,7 +204,10 @@ private fun SessionScreenTopBar(
 
 @Composable
 private fun TimerSection(
-    modifier: Modifier
+    modifier: Modifier,
+    hours: String,
+    minutes: String,
+    seconds: String
 ) {
     Box(
         modifier = modifier,
@@ -170,10 +218,38 @@ private fun TimerSection(
                 .size(250.dp)
                 .border(5.dp, MaterialTheme.colorScheme.surfaceVariant, CircleShape)
         )
-        Text(
-            text = "00:05:32",
-            style = MaterialTheme.typography.titleLarge.copy(fontSize = 35.sp)
-        )
+        Row {
+            AnimatedContent(
+                targetState = hours,
+                label = hours,
+                transitionSpec = { timerTextAnimation() }
+            ) { hours ->
+                Text(
+                    text = "$hours:",
+                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 35.sp)
+                )
+            }
+            AnimatedContent(
+                targetState = minutes,
+                label = minutes,
+                transitionSpec = { timerTextAnimation() }
+            ) { minutes ->
+                Text(
+                    text = "$minutes:",
+                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 35.sp)
+                )
+            }
+            AnimatedContent(
+                targetState = seconds,
+                label = seconds,
+                transitionSpec = { timerTextAnimation() }
+            ) { seconds ->
+                Text(
+                    text = seconds,
+                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 35.sp)
+                )
+            }
+        }
     }
 }
 
@@ -213,24 +289,42 @@ private fun ButtonsSection(
     startButtonClick: () -> Unit,
     cancelButtonClick: () -> Unit,
     finishButtonClick: () -> Unit,
+    timerState: TimerState,
+    seconds: String
 ) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Button(onClick = cancelButtonClick) {
+        Button(
+            onClick = cancelButtonClick,
+            enabled = seconds != "00" && timerState != TimerState.STARTED
+        ) {
             Text(
                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
                 text = "Cancel"
             )
         }
-        Button(onClick = startButtonClick) {
+        Button(
+            onClick = startButtonClick,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (timerState == TimerState.STARTED) Red
+                else MaterialTheme.colorScheme.primary,
+            )
+        ) {
             Text(
                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
-                text = "Start"
+                text = when(timerState) {
+                    TimerState.STARTED -> "Stop"
+                    TimerState.STOPPED -> "Resume"
+                    else -> "Start"
+                }
             )
         }
-        Button(onClick = finishButtonClick) {
+        Button(
+            onClick = finishButtonClick,
+            enabled = seconds != "00" && timerState != TimerState.STARTED
+        ) {
             Text(
                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
                 text = "Finish"
