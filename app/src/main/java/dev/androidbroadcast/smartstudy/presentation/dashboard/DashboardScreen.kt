@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.androidbroadcast.smartstudy.R
 import dev.androidbroadcast.smartstudy.domain.model.Session
@@ -64,7 +65,8 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 
 // For navigation
-@Destination(start = true)
+@RootNavGraph(start = true)
+@Destination
 @Composable
 fun DashboardScreenRoute(
     navigator: DestinationsNavigator
@@ -133,9 +135,9 @@ private fun DashboardScreen(
         isOpen = isAddSubjectDialogOpen,
         subjectName = state.subjectName,
         goalHours = state.goalStudyHours,
+        selectedColors = state.subjectCardColors,
         onSubjectNameChange = { onEvent(DashboardEvent.OnSubjectNameChange(it)) },
         onGoalHoursChange = { onEvent(DashboardEvent.OnGoalStudyHoursChange(it)) },
-        selectedColors = state.subjectCardColors,
         onColorChange = { onEvent(DashboardEvent.OnSubjectCardColorChange(it)) },
         onDismissRequest = { isAddSubjectDialogOpen = false },
         onConfirmButtonClick = {

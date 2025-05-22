@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.androidbroadcast.smartstudy.domain.model.Subject
+import dev.androidbroadcast.smartstudy.domain.model.Task
 import dev.androidbroadcast.smartstudy.domain.repository.SessionRepository
 import dev.androidbroadcast.smartstudy.domain.repository.SubjectRepository
 import dev.androidbroadcast.smartstudy.domain.repository.TaskRepository
@@ -82,11 +83,13 @@ class SubjectViewModel @Inject constructor(
                 }
             }
 
+            is SubjectEvent.OnDeleteSessionButtonClick -> {}
+            is SubjectEvent.OnTaskIsCompleteChange -> {
+                updateTask(event.task)
+            }
             SubjectEvent.UpdateSubject -> updateSubject()
             SubjectEvent.DeleteSubject -> deleteSubject()
-            SubjectEvent.DeleteSession -> TODO()
-            is SubjectEvent.OnDeleteSessionButtonClick -> TODO()
-            is SubjectEvent.OnTaskIsCompleteChange -> TODO()
+            SubjectEvent.DeleteSession -> {}
             SubjectEvent.UpdateProgress -> {
                 val goalStudyHours = state.value.goalStudyHours.toFloatOrNull() ?: 1f
                 _state.update {
@@ -116,7 +119,7 @@ class SubjectViewModel @Inject constructor(
                 _snackbarEventFlow.emit(
                     SnackbarEvent.ShowSnackbar(
                         message = "Couldn't update subject. ${e.message}",
-                        SnackbarDuration.Long
+                        duration = SnackbarDuration.Long
                     )
                 )
             }
@@ -131,7 +134,9 @@ class SubjectViewModel @Inject constructor(
                         it.copy(
                             subjectName = subject.name,
                             goalStudyHours = subject.goalHours.toString(),
-                            subjectCardColors = subject.colors.map { Color(it) },
+                            subjectCardColors = subject.colors.map { colors ->
+                                Color(colors)
+                            },
                             currentSubjectId = subject.subjectId
                         )
                     }
@@ -160,6 +165,32 @@ class SubjectViewModel @Inject constructor(
                 _snackbarEventFlow.emit(
                     SnackbarEvent.ShowSnackbar(
                         message = "Couldn't delete subject. ${e.message}",
+                        duration = SnackbarDuration.Long
+                    )
+                )
+            }
+        }
+    }
+
+    private fun updateTask(task: Task) {
+        viewModelScope.launch {
+            try {
+                taskRepository.upsertTask(
+                    task = task.copy(isComplete = !task.isComplete)
+                )
+                if (task.isComplete) {
+                    _snackbarEventFlow.emit(
+                        SnackbarEvent.ShowSnackbar(message = "Saved in upcoming tasks.")
+                    )
+                } else {
+                    _snackbarEventFlow.emit(
+                        SnackbarEvent.ShowSnackbar(message = "Saved in completed tasks.")
+                    )
+                }
+            } catch (e: Exception) {
+                _snackbarEventFlow.emit(
+                    SnackbarEvent.ShowSnackbar(
+                        message = "Couldn't update task. ${e.message}",
                         duration = SnackbarDuration.Long
                     )
                 )

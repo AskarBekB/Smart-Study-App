@@ -53,14 +53,14 @@ class DashboardViewModel @Inject constructor(
     val tasks: StateFlow<List<Task>> = taskRepository.getAllUpcomingTasks()
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis =5000),
             initialValue = emptyList()
         )
 
     val recentSessions: StateFlow<List<Session>> = sessionRepository.getRecentFiveSessions()
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis =5000),
             initialValue = emptyList()
         )
 
@@ -94,8 +94,30 @@ class DashboardViewModel @Inject constructor(
                 }
             }
             DashboardEvent.SaveSubject -> saveSubject()
-            DashboardEvent.DeleteSession -> TODO()
-            is DashboardEvent.OnTaskIsCompleteChange -> TODO()
+            DashboardEvent.DeleteSession -> {}
+            is DashboardEvent.OnTaskIsCompleteChange -> {
+                updateTask(event.task)
+            }
+        }
+    }
+
+    private fun updateTask(task: Task) {
+        viewModelScope.launch {
+            try {
+                taskRepository.upsertTask(
+                    task = task.copy(isComplete = !task.isComplete)
+                )
+                _snackbarEventFlow.emit(
+                    SnackbarEvent.ShowSnackbar(message = "Saved in completed tasks.")
+                )
+            } catch (e: Exception) {
+                _snackbarEventFlow.emit(
+                    SnackbarEvent.ShowSnackbar(
+                        "Couldn't update task. ${e.message}",
+                        SnackbarDuration.Long
+                    )
+                )
+            }
         }
     }
 
@@ -117,13 +139,13 @@ class DashboardViewModel @Inject constructor(
                     )
                 }
                 _snackbarEventFlow.emit(
-                    SnackbarEvent.ShowSnackbar("Subject saved successfully")
+                    SnackbarEvent.ShowSnackbar(message = "Subject saved successfully")
                 )
             } catch (e: Exception) {
                 _snackbarEventFlow.emit(
                     SnackbarEvent.ShowSnackbar(
-                        "Couldn't save subject. ${e.message}",
-                        SnackbarDuration.Long
+                        message = "Couldn't save subject. ${e.message}",
+                        duration = SnackbarDuration.Long
                     )
                 )
             }
