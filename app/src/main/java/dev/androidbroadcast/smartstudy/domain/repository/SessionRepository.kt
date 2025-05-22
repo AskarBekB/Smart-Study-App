@@ -17,5 +17,5 @@ interface SessionRepository {
 
     fun getTotalSessionDuration(): Flow<Long>
 
-    fun getTotalSessionDurationBySubjectId(subjectId: Int): Flow<Long>
+    fun getTotalSessionsDurationBySubject(subjectId: Int): Flow<Long>
 }
