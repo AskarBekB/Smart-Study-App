@@ -25,7 +25,7 @@ enum class Priority(
     }
 }
 
-fun Long?.changMillisToDateString(): String {
+fun Long?.changeMillisToDateString(): String {
     val date: LocalDate = this?.let {
         Instant
             .ofEpochMilli(it)

@@ -13,6 +13,7 @@ class SubjectRepositoryImpl @Inject constructor(
     private val taskDao: TaskDao,
     private val sessionDao: SessionDao
 ): SubjectRepository {
+
     override suspend fun upsertSubject(subject: Subject) {
         subjectDao.upsertSubject(subject)
     }
@@ -26,7 +27,7 @@ class SubjectRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteSubject(subjectId: Int) {
-        taskDao.deleteTaskBySubjectId(subjectId)
+        taskDao.deleteTasksBySubjectId(subjectId)
         sessionDao.deleteSessionsBySubjectId(subjectId)
         subjectDao.deleteSubject(subjectId)
     }

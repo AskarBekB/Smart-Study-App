@@ -29,7 +29,7 @@ class DashboardViewModel @Inject constructor(
     private val subjectRepository: SubjectRepository,
     private val sessionRepository: SessionRepository,
     private val taskRepository: TaskRepository
-): ViewModel() {
+) : ViewModel() {
 
     private val _state = MutableStateFlow(DashboardState())
     val state = combine(
@@ -37,7 +37,7 @@ class DashboardViewModel @Inject constructor(
         subjectRepository.getTotalSubjectCount(),
         subjectRepository.getTotalGoalHours(),
         subjectRepository.getAllSubjects(),
-        sessionRepository.getTotalSessionDuration()
+        sessionRepository.getTotalSessionsDuration()
     ) { state, subjectCount, goalHours, subjects, totalSessionDuration ->
         state.copy(
             totalSubjectCount = subjectCount,
@@ -50,49 +50,50 @@ class DashboardViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
         initialValue = DashboardState()
     )
+
     val tasks: StateFlow<List<Task>> = taskRepository.getAllUpcomingTasks()
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(stopTimeoutMillis =5000),
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
             initialValue = emptyList()
         )
 
     val recentSessions: StateFlow<List<Session>> = sessionRepository.getRecentFiveSessions()
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(stopTimeoutMillis =5000),
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
             initialValue = emptyList()
         )
 
     private val _snackbarEventFlow = MutableSharedFlow<SnackbarEvent>()
-
     val snackbarEventFlow = _snackbarEventFlow.asSharedFlow()
 
-
-
     fun onEvent(event: DashboardEvent) {
-
-        when(event){
+        when (event) {
             is DashboardEvent.OnSubjectNameChange -> {
                 _state.update {
                     it.copy(subjectName = event.name)
                 }
             }
+
             is DashboardEvent.OnGoalStudyHoursChange -> {
                 _state.update {
                     it.copy(goalStudyHours = event.hours)
                 }
             }
+
             is DashboardEvent.OnSubjectCardColorChange -> {
                 _state.update {
                     it.copy(subjectCardColors = event.colors)
                 }
             }
+
             is DashboardEvent.OnDeleteSessionButtonClick -> {
                 _state.update {
                     it.copy(session = event.session)
                 }
             }
+
             DashboardEvent.SaveSubject -> saveSubject()
             DashboardEvent.DeleteSession -> deleteSession()
             is DashboardEvent.OnTaskIsCompleteChange -> {
@@ -161,14 +162,15 @@ class DashboardViewModel @Inject constructor(
                         SnackbarEvent.ShowSnackbar(message = "Session deleted successfully")
                     )
                 }
-            } catch (e: Exception){
+            } catch (e: Exception) {
                 _snackbarEventFlow.emit(
                     SnackbarEvent.ShowSnackbar(
-                        message = "Couldn't delete session, ${e.message}",
+                        message = "Couldn't delete session. ${e.message}",
                         duration = SnackbarDuration.Long
                     )
                 )
             }
         }
     }
+
 }

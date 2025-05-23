@@ -65,11 +65,10 @@ import kotlin.time.DurationUnit
     deepLinks = [
         DeepLink(
             action = Intent.ACTION_VIEW,
-            uriPattern = "smart_study://dashboard/session"
+            uriPattern = "study_smart://dashboard/session"
         )
     ]
 )
-
 @Composable
 fun SessionScreenRoute(
     navigator: DestinationsNavigator,
@@ -86,6 +85,7 @@ fun SessionScreenRoute(
         timerService = timerService
     )
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SessionScreen(
@@ -95,6 +95,7 @@ private fun SessionScreen(
     onBackButtonClick: () -> Unit,
     timerService: StudySessionTimerService
 ) {
+
     val hours by timerService.hours
     val minutes by timerService.minutes
     val seconds by timerService.seconds
@@ -234,7 +235,7 @@ private fun SessionScreen(
                 emptyListText = "You don't have any recent study sessions.\n " +
                         "Start a study session to begin recording your progress.",
                 sessions = state.sessions,
-                onClickDelete = { session ->
+                onDeleteIconClick = { session ->
                     isDeleteDialogOpen = true
                     onEvent(SessionEvent.OnDeleteSessionButtonClick(session))
                 }
@@ -287,7 +288,7 @@ private fun TimerSection(
             ) { hours ->
                 Text(
                     text = "$hours:",
-                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 35.sp)
+                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 45.sp)
                 )
             }
             AnimatedContent(
@@ -297,7 +298,7 @@ private fun TimerSection(
             ) { minutes ->
                 Text(
                     text = "$minutes:",
-                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 35.sp)
+                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 45.sp)
                 )
             }
             AnimatedContent(
@@ -307,7 +308,7 @@ private fun TimerSection(
             ) { seconds ->
                 Text(
                     text = seconds,
-                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 35.sp)
+                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 45.sp)
                 )
             }
         }
@@ -375,11 +376,12 @@ private fun ButtonsSection(
             colors = ButtonDefaults.buttonColors(
                 containerColor = if (timerState == TimerState.STARTED) Red
                 else MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.secondary
             )
         ) {
             Text(
                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
-                text = when(timerState) {
+                text = when (timerState) {
                     TimerState.STARTED -> "Stop"
                     TimerState.STOPPED -> "Resume"
                     else -> "Start"

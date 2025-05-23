@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 fun TaskCheckBox(
     isComplete: Boolean,
     borderColor: Color,
-    onCheckBoxClick: () -> Unit,
+    onCheckBoxClick: () -> Unit
 ) {
     Box(
         modifier = Modifier

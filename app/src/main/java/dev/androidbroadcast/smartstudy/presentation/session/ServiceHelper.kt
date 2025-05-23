@@ -14,11 +14,10 @@ object ServiceHelper {
     fun clickPendingIntent(context: Context): PendingIntent {
         val deepLinkIntent = Intent(
             Intent.ACTION_VIEW,
-            "smart_study://dashboard/session".toUri(),
+            "study_smart://dashboard/session".toUri(),
             context,
             MainActivity::class.java
         )
-
         return TaskStackBuilder.create(context).run {
             addNextIntentWithParentStack(deepLinkIntent)
             getPendingIntent(
@@ -31,11 +30,7 @@ object ServiceHelper {
     fun triggerForegroundService(context: Context, action: String) {
         Intent(context, StudySessionTimerService::class.java).apply {
             this.action = action
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(this)
-            } else {
-                context.startService(this)
-            }
+            context.startService(this)
         }
     }
 }

@@ -24,7 +24,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 @AndroidEntryPoint
-class StudySessionTimerService: Service() {
+class StudySessionTimerService : Service() {
 
     @Inject
     lateinit var notificationManager: NotificationManager
@@ -35,34 +35,27 @@ class StudySessionTimerService: Service() {
     private val binder = StudySessionTimerBinder()
 
     private lateinit var timer: Timer
-
     var duration: Duration = Duration.ZERO
         private set
-
     var seconds = mutableStateOf("00")
         private set
-
     var minutes = mutableStateOf("00")
         private set
-
     var hours = mutableStateOf("00")
         private set
-
-    var currentTimerState = mutableStateOf(TimerState.IDlE)
+    var currentTimerState = mutableStateOf(TimerState.IDLE)
         private set
-
     var subjectId = mutableStateOf<Int?>(null)
 
-
-    override fun onBind(p0: Intent?): IBinder? = binder
+    override fun onBind(p0: Intent?) = binder
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.action.let {
-            when(it){
+            when (it) {
                 ACTION_SERVICE_START -> {
-                   startForeGroundService()
+                    startForegroundService()
                     startTimer { hours, minutes, seconds ->
-                        updateNotification(hours,minutes, seconds)
+                        updateNotification(hours, minutes, seconds)
                     }
                 }
                 ACTION_SERVICE_STOP -> {
@@ -71,19 +64,19 @@ class StudySessionTimerService: Service() {
                 ACTION_SERVICE_CANCEL -> {
                     stopTimer()
                     cancelTimer()
-                    stopForeGroundService()
+                    stopForegroundService()
                 }
             }
         }
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun startForeGroundService(){
+    private fun startForegroundService() {
         createNotificationChannel()
         startForeground(NOTIFICATION_ID, notificationBuilder.build())
     }
 
-    private fun stopForeGroundService() {
+    private fun stopForegroundService() {
         notificationManager.cancel(NOTIFICATION_ID)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             stopForeground(STOP_FOREGROUND_REMOVE)
@@ -91,7 +84,7 @@ class StudySessionTimerService: Service() {
         stopSelf()
     }
 
-    private fun createNotificationChannel(){
+    private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 NOTIFICATION_CHANNEL_ID,
@@ -111,18 +104,16 @@ class StudySessionTimerService: Service() {
         )
     }
 
-
     private fun startTimer(
         onTick: (h: String, m: String, s: String) -> Unit
     ) {
         currentTimerState.value = TimerState.STARTED
-        timer = fixedRateTimer(initialDelay = 1000L, period = 1000L ) {
+        timer = fixedRateTimer(initialDelay = 1000L, period = 1000L) {
             duration = duration.plus(1.seconds)
             updateTimeUnits()
-            onTick(hours.value,minutes.value, seconds.value)
+            onTick(hours.value, minutes.value, seconds.value)
         }
     }
-
 
     private fun stopTimer() {
         if (this::timer.isInitialized) {
@@ -134,7 +125,7 @@ class StudySessionTimerService: Service() {
     private fun cancelTimer() {
         duration = Duration.ZERO
         updateTimeUnits()
-        currentTimerState.value = TimerState.IDlE
+        currentTimerState.value = TimerState.IDLE
     }
 
     private fun updateTimeUnits() {
@@ -145,14 +136,13 @@ class StudySessionTimerService: Service() {
         }
     }
 
-    inner class StudySessionTimerBinder: Binder() {
-
+    inner class StudySessionTimerBinder : Binder() {
         fun getService(): StudySessionTimerService = this@StudySessionTimerService
     }
 }
 
-enum class TimerState{
-    IDlE,
+enum class TimerState {
+    IDLE,
     STARTED,
     STOPPED
 }

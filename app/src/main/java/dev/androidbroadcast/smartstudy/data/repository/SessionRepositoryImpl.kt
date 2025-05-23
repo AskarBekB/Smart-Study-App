@@ -11,6 +11,7 @@ import javax.inject.Inject
 class SessionRepositoryImpl @Inject constructor(
     private val sessionDao: SessionDao
 ): SessionRepository {
+
     override suspend fun insertSession(session: Session) {
         sessionDao.insertSession(session)
     }
@@ -21,6 +22,7 @@ class SessionRepositoryImpl @Inject constructor(
 
     override fun getAllSessions(): Flow<List<Session>> {
         return sessionDao.getAllSessions()
+            .map { sessions -> sessions.sortedByDescending { it.date } }
     }
 
     override fun getRecentFiveSessions(): Flow<List<Session>> {
@@ -30,12 +32,12 @@ class SessionRepositoryImpl @Inject constructor(
     }
 
     override fun getRecentTenSessionsForSubject(subjectId: Int): Flow<List<Session>> {
-        return sessionDao.getRecentSessionForSubject(subjectId)
+        return sessionDao.getRecentSessionsForSubject(subjectId)
             .map { sessions -> sessions.sortedByDescending { it.date } }
             .take(count = 10)
     }
 
-    override fun getTotalSessionDuration(): Flow<Long> {
+    override fun getTotalSessionsDuration(): Flow<Long> {
         return sessionDao.getTotalSessionsDuration()
     }
 

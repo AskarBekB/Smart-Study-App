@@ -12,12 +12,11 @@ import dev.androidbroadcast.smartstudy.domain.model.Task
     version = 1
 )
 
+
 @TypeConverters(ColorListProvider::class)
 abstract class AppDatabase: RoomDatabase() {
 
     abstract fun subjectDao(): SubjectDao
-
     abstract fun taskDao(): TaskDao
-
     abstract fun sessionDao(): SessionDao
 }

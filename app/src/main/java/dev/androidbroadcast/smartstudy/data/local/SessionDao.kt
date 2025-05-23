@@ -20,7 +20,7 @@ interface SessionDao {
     fun getAllSessions(): Flow<List<Session>>
 
     @Query("SELECT * FROM Session WHERE sessionSubjectId = :subjectId")
-    fun getRecentSessionForSubject(subjectId: Int): Flow<List<Session>>
+    fun getRecentSessionsForSubject(subjectId: Int): Flow<List<Session>>
 
     @Query("SELECT SUM(duration) FROM Session")
     fun getTotalSessionsDuration(): Flow<Long>

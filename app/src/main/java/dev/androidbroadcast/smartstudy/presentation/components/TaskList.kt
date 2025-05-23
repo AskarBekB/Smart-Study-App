@@ -27,9 +27,9 @@ import androidx.compose.ui.unit.dp
 import dev.androidbroadcast.smartstudy.R
 import dev.androidbroadcast.smartstudy.domain.model.Task
 import dev.androidbroadcast.smartstudy.util.Priority
-import dev.androidbroadcast.smartstudy.util.changMillisToDateString
+import dev.androidbroadcast.smartstudy.util.changeMillisToDateString
 
-fun LazyListScope.taskList(
+fun LazyListScope.tasksList(
     sectionTitle: String,
     emptyListText: String,
     tasks: List<Task>,
@@ -43,15 +43,14 @@ fun LazyListScope.taskList(
             modifier = Modifier.padding(12.dp)
         )
     }
-    if(tasks.isEmpty()) {
+    if (tasks.isEmpty()) {
         item {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    modifier = Modifier
-                        .size(120.dp),
+                    modifier = Modifier.size(120.dp),
                     painter = painterResource(R.drawable.task_icon),
                     contentDescription = emptyListText
                 )
@@ -81,7 +80,7 @@ private fun TaskCard(
     task: Task,
     onCheckBoxClick: () -> Unit,
     onClick: () -> Unit
-){
+) {
     ElevatedCard(
         modifier = modifier.clickable { onClick() }
     ) {
@@ -109,9 +108,8 @@ private fun TaskCard(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = task.dueDate.changMillisToDateString(),
-                    style = MaterialTheme.typography.bodySmall,
-
+                    text = task.dueDate.changeMillisToDateString(),
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
         }

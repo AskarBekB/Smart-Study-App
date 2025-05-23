@@ -27,7 +27,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.androidbroadcast.smartstudy.R
 import dev.androidbroadcast.smartstudy.domain.model.Session
-import dev.androidbroadcast.smartstudy.util.changMillisToDateString
+import dev.androidbroadcast.smartstudy.util.changeMillisToDateString
 import dev.androidbroadcast.smartstudy.util.toHours
 
 
@@ -35,7 +35,7 @@ fun LazyListScope.studySessionsList(
     sectionTitle: String,
     emptyListText: String,
     sessions: List<Session>,
-    onClickDelete: (Session) -> Unit
+    onDeleteIconClick: (Session) -> Unit
 ) {
     item {
         Text(
@@ -44,15 +44,14 @@ fun LazyListScope.studySessionsList(
             modifier = Modifier.padding(12.dp)
         )
     }
-    if(sessions.isEmpty()) {
+    if (sessions.isEmpty()) {
         item {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    modifier = Modifier
-                        .size(120.dp),
+                    modifier = Modifier.size(120.dp),
                     painter = painterResource(R.drawable.lamp_icon),
                     contentDescription = emptyListText
                 )
@@ -70,7 +69,7 @@ fun LazyListScope.studySessionsList(
         StudySessionCard(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
             session = session,
-            onClickDelete = { onClickDelete(session) }
+            onDeleteIconClick = { onDeleteIconClick(session) }
         )
     }
 }
@@ -79,8 +78,8 @@ fun LazyListScope.studySessionsList(
 private fun StudySessionCard(
     modifier: Modifier = Modifier,
     session: Session,
-    onClickDelete: () -> Unit
-){
+    onDeleteIconClick: () -> Unit
+) {
     Card(
         modifier = modifier
     ) {
@@ -88,15 +87,17 @@ private fun StudySessionCard(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
+            Column(
+                modifier = Modifier.padding(start = 12.dp)
+            ) {
                 Text(
                     text = session.relatedToSubject,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    text = session.date.changMillisToDateString(),
+                    text = session.date.changeMillisToDateString(),
                     style = MaterialTheme.typography.bodySmall
                 )
             }
@@ -105,7 +106,7 @@ private fun StudySessionCard(
                 text = "${session.duration.toHours()} hr",
                 style = MaterialTheme.typography.titleMedium
             )
-            IconButton(onClick = { onClickDelete() } ) {
+            IconButton(onClick = onDeleteIconClick) {
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete Session"

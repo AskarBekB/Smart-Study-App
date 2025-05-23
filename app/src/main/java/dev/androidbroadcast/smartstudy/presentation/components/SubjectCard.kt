@@ -24,11 +24,11 @@ fun SubjectCard(
     subjectName: String,
     gradientColors: List<Color>,
     onClick: () -> Unit
-){
+) {
     Box(
         modifier = modifier
-            .size(200.dp)
-            .clickable{ onClick() }
+            .size(150.dp)
+            .clickable { onClick() }
             .background(
                 brush = Brush.verticalGradient(gradientColors),
                 shape = MaterialTheme.shapes.medium
@@ -40,8 +40,8 @@ fun SubjectCard(
         ) {
             Image(
                 painter = painterResource(R.drawable.book_icon),
-                contentDescription = "",
-                modifier = Modifier.size(60.dp)
+                contentDescription = subjectName,
+                modifier = Modifier.size(80.dp)
             )
             Text(
                 text = subjectName,

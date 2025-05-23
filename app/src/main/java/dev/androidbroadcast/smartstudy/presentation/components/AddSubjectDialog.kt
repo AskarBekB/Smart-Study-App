@@ -43,9 +43,8 @@ fun AddSubjectDialog(
     onSubjectNameChange: (String) -> Unit,
     onGoalHoursChange: (String) -> Unit,
     onDismissRequest: () -> Unit,
-    onConfirmButtonClick: () -> Unit,
+    onConfirmButtonClick: () -> Unit
 ) {
-
     var subjectNameError by rememberSaveable { mutableStateOf<String?>(null) }
     var goalHoursError by rememberSaveable { mutableStateOf<String?>(null) }
 
@@ -55,19 +54,18 @@ fun AddSubjectDialog(
         subjectName.length > 20 -> "Subject name is too long."
         else -> null
     }
-
     goalHoursError = when {
         goalHours.isBlank() -> "Please enter goal study hours."
         goalHours.toFloatOrNull() == null -> "Invalid number."
         goalHours.toFloat() < 1f -> "Please set at least 1 hour."
-        goalHours.toFloat() > 1000f -> "Please set a minimum of 1000 hours."
+        goalHours.toFloat() > 1000f -> "Please set a maximum of 1000 hours."
         else -> null
     }
 
     if (isOpen) {
         AlertDialog(
             onDismissRequest = onDismissRequest,
-            title = { Text(title) },
+            title = { Text(text = title) },
             text = {
                 Column {
                     Row(
@@ -82,7 +80,8 @@ fun AddSubjectDialog(
                                     .size(24.dp)
                                     .clip(CircleShape)
                                     .border(
-                                        width = 1.dp, color = if (colors == selectedColors) Color.Green
+                                        width = 1.dp,
+                                        color = if (colors == selectedColors) Color.Black
                                         else Color.Transparent,
                                         shape = CircleShape
                                     )
@@ -94,26 +93,26 @@ fun AddSubjectDialog(
                     OutlinedTextField(
                         value = subjectName,
                         onValueChange = onSubjectNameChange,
-                        label = { Text("Subject Name")},
+                        label = { Text(text = "Subject Name") },
                         singleLine = true,
                         isError = subjectNameError != null && subjectName.isNotBlank(),
-                        supportingText = { Text(subjectNameError.orEmpty())}
+                        supportingText = { Text(text = subjectNameError.orEmpty())}
                     )
                     Spacer(modifier = Modifier.height(10.dp))
                     OutlinedTextField(
                         value = goalHours,
                         onValueChange = onGoalHoursChange,
-                        label = { Text("Goal Study Hours")},
+                        label = { Text(text = "Goal Study Hours") },
                         singleLine = true,
                         isError = goalHoursError != null && goalHours.isNotBlank(),
-                        supportingText = { Text(goalHoursError.orEmpty())},
+                        supportingText = { Text(text = goalHoursError.orEmpty())},
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
                 }
             },
             dismissButton = {
                 TextButton(onClick = onDismissRequest) {
-                    Text("Cancel")
+                    Text(text = "Cancel")
                 }
             },
             confirmButton = {
@@ -121,7 +120,7 @@ fun AddSubjectDialog(
                     onClick = onConfirmButtonClick,
                     enabled = subjectNameError == null && goalHoursError == null
                 ) {
-                    Text("Save")
+                    Text(text = "Save")
                 }
             }
         )

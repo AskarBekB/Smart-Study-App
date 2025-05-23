@@ -34,13 +34,14 @@ class SubjectViewModel @Inject constructor(
     private val sessionRepository: SessionRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
     private val navArgs: SubjectScreenNavArgs = savedStateHandle.navArgs()
 
     private val _state = MutableStateFlow(SubjectState())
     val state = combine(
         _state,
         taskRepository.getUpcomingTasksForSubject(navArgs.subjectId),
-        taskRepository.getCompleteTaskForSubject(navArgs.subjectId),
+        taskRepository.getCompletedTasksForSubject(navArgs.subjectId),
         sessionRepository.getRecentTenSessionsForSubject(navArgs.subjectId),
         sessionRepository.getTotalSessionsDurationBySubject(navArgs.subjectId)
     ) { state, upcomingTasks, completedTask, recentSessions, totalSessionsDuration ->
@@ -91,9 +92,11 @@ class SubjectViewModel @Inject constructor(
             is SubjectEvent.OnTaskIsCompleteChange -> {
                 updateTask(event.task)
             }
+
             SubjectEvent.UpdateSubject -> updateSubject()
             SubjectEvent.DeleteSubject -> deleteSubject()
             SubjectEvent.DeleteSession -> deleteSession()
+
             SubjectEvent.UpdateProgress -> {
                 val goalStudyHours = state.value.goalStudyHours.toFloatOrNull() ?: 1f
                 _state.update {
@@ -138,9 +141,7 @@ class SubjectViewModel @Inject constructor(
                         it.copy(
                             subjectName = subject.name,
                             goalStudyHours = subject.goalHours.toString(),
-                            subjectCardColors = subject.colors.map { colors ->
-                                Color(colors)
-                            },
+                            subjectCardColors = subject.colors.map { colors -> Color(colors) },
                             currentSubjectId = subject.subjectId
                         )
                     }
@@ -211,14 +212,15 @@ class SubjectViewModel @Inject constructor(
                         SnackbarEvent.ShowSnackbar(message = "Session deleted successfully")
                     )
                 }
-            } catch (e: Exception){
+            } catch (e: Exception) {
                 _snackbarEventFlow.emit(
                     SnackbarEvent.ShowSnackbar(
-                        message = "Couldn't delete session, ${e.message}",
+                        message = "Couldn't delete session. ${e.message}",
                         duration = SnackbarDuration.Long
                     )
                 )
             }
         }
     }
+
 }

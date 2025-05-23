@@ -133,7 +133,7 @@ class TaskViewModel @Inject constructor(
             if (state.subjectId == null || state.relatedToSubject == null) {
                 _snackbarEventFlow.emit(
                     SnackbarEvent.ShowSnackbar(
-                        message = "Please select subject related to the task",
+                        message = "Please select subject related to the task"
                     )
                 )
                 return@launch
@@ -201,4 +201,5 @@ class TaskViewModel @Inject constructor(
             }
         }
     }
+
 }

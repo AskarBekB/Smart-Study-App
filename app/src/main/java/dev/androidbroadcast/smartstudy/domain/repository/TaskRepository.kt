@@ -13,7 +13,7 @@ interface TaskRepository {
 
     fun getUpcomingTasksForSubject(subjectId: Int): Flow<List<Task>>
 
-    fun getCompleteTaskForSubject(subjectId: Int): Flow<List<Task>>
+    fun getCompletedTasksForSubject(subjectId: Int): Flow<List<Task>>
 
     fun getAllUpcomingTasks(): Flow<List<Task>>
 }

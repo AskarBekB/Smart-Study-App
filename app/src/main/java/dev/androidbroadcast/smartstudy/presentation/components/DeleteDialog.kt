@@ -11,23 +11,21 @@ fun DeleteDialog(
     title: String,
     bodyText: String,
     onDismissRequest: () -> Unit,
-    onConfirmButtonClick: () -> Unit,
+    onConfirmButtonClick: () -> Unit
 ) {
     if (isOpen) {
         AlertDialog(
             onDismissRequest = onDismissRequest,
-            title = { Text(title) },
-            text = { Text(bodyText) },
+            title = { Text(text = title) },
+            text = { Text(text = bodyText) },
             dismissButton = {
                 TextButton(onClick = onDismissRequest) {
-                    Text("Cancel")
+                    Text(text = "Cancel")
                 }
             },
             confirmButton = {
-                TextButton(
-                    onClick = onConfirmButtonClick,
-                ) {
-                    Text("Delete")
+                TextButton(onClick = onConfirmButtonClick) {
+                    Text(text = "Delete")
                 }
             }
         )
