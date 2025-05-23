@@ -1,6 +1,5 @@
 package dev.androidbroadcast.smartstudy.presentation.subject
 
-
 import androidx.compose.ui.graphics.Color
 import dev.androidbroadcast.smartstudy.domain.model.Session
 import dev.androidbroadcast.smartstudy.domain.model.Subject

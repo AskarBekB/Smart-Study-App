@@ -21,7 +21,7 @@ enum class Priority(
     HARD(title = "Hard", color = Red, value = 2);
 
     companion object {
-        fun fromtInt(value: Int) = values().firstOrNull() { it.value == value } ?: MEDIUM
+        fun fromInt(value: Int) = values().firstOrNull() { it.value == value } ?: MEDIUM
     }
 }
 

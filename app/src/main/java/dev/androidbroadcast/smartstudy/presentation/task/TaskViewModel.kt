@@ -177,7 +177,7 @@ class TaskViewModel @Inject constructor(
                             dueDate = task.dueDate,
                             isTaskComplete = task.isComplete,
                             relatedToSubject = task.relatedToSubject,
-                            priority = Priority.fromtInt(task.priority),
+                            priority = Priority.fromInt(task.priority),
                             subjectId = task.taskSubjectId,
                             currentTaskId = task.taskId
                         )

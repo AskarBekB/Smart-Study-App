@@ -27,6 +27,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.androidbroadcast.smartstudy.R
 import dev.androidbroadcast.smartstudy.domain.model.Session
+import dev.androidbroadcast.smartstudy.util.changMillisToDateString
+import dev.androidbroadcast.smartstudy.util.toHours
 
 
 fun LazyListScope.studySessionsList(
@@ -94,13 +96,13 @@ private fun StudySessionCard(
                     style = MaterialTheme.typography.titleMedium,
                 )
                 Text(
-                    text = "${session.date}",
+                    text = session.date.changMillisToDateString(),
                     style = MaterialTheme.typography.bodySmall
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
             Text(
-                text = "${session.duration} hr",
+                text = "${session.duration.toHours()} hr",
                 style = MaterialTheme.typography.titleMedium
             )
             IconButton(onClick = { onClickDelete() } ) {

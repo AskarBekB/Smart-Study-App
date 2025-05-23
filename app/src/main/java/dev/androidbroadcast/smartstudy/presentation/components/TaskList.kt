@@ -93,7 +93,7 @@ private fun TaskCard(
         ) {
             TaskCheckBox(
                 isComplete = task.isComplete,
-                borderColor = Priority.fromtInt(task.priority).color,
+                borderColor = Priority.fromInt(task.priority).color,
                 onCheckBoxClick = onCheckBoxClick
             )
             Spacer(modifier = Modifier.width(10.dp))

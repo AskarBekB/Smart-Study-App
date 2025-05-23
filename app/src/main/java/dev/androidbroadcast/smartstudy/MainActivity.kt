@@ -13,14 +13,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.ActivityCompat
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.navigation.dependency
 import dagger.hilt.android.AndroidEntryPoint
-import dev.androidbroadcast.smartstudy.domain.model.Session
-import dev.androidbroadcast.smartstudy.domain.model.Subject
-import dev.androidbroadcast.smartstudy.domain.model.Task
 import dev.androidbroadcast.smartstudy.presentation.NavGraphs
 import dev.androidbroadcast.smartstudy.presentation.destinations.SessionScreenRouteDestination
 import dev.androidbroadcast.smartstudy.presentation.session.StudySessionTimerService
@@ -87,104 +83,3 @@ class MainActivity : ComponentActivity() {
         isBound = false
     }
 }
-
-val subjects = listOf(
-    Subject("English", 10f, Subject.subjectCardColors[0].map { it.toArgb() }, 0),
-    Subject("Physics", 10f, Subject.subjectCardColors[1].map { it.toArgb() }, 0),
-    Subject("Maths", 10f, Subject.subjectCardColors[2].map { it.toArgb() }, 0),
-    Subject("Geography", 10f, Subject.subjectCardColors[3].map { it.toArgb() }, 0),
-    Subject("Chemistry", 10f, Subject.subjectCardColors[4].map { it.toArgb() }, 0),
-)
-
-val tasks = listOf(
-    Task(
-        title = "Prepare notes",
-        description = "",
-        dueDate = 0L,
-        priority = 0,
-        relatedToSubject = "",
-        isComplete = false,
-        0,1
-    ),
-    Task(
-        title = "Do homework",
-        description = "",
-        dueDate = 0L,
-        priority = 2,
-        relatedToSubject = "",
-        isComplete = true,
-        0,1
-    ),
-    Task(
-        title = "Go Coaching",
-        description = "",
-        dueDate = 0L,
-        priority = 3,
-        relatedToSubject = "",
-        isComplete = true,
-        0,1
-    ),
-    Task(
-        title = "Assignment",
-        description = "",
-        dueDate = 0L,
-        priority = 0,
-        relatedToSubject = "",
-        isComplete = false,
-        0,1
-    ),
-    Task(
-        title = "Make dinner",
-        description = "",
-        dueDate = 0L,
-        priority = 0,
-        relatedToSubject = "",
-        isComplete = true,
-        0,1
-    ),
-)
-
-val sessions = listOf(
-    Session(
-        relatedToSubject = "English",
-        date = 0L,
-        duration = 2,
-        sessionSubjectId = 0,
-        sessionId = 0
-    ),
-    Session(
-        relatedToSubject = "Maths",
-        date = 0L,
-        duration = 2,
-        sessionSubjectId = 0,
-        sessionId = 0
-    ),
-    Session(
-        relatedToSubject = "Biology",
-        date = 0L,
-        duration = 2,
-        sessionSubjectId = 0,
-        sessionId = 0
-    ),
-    Session(
-        relatedToSubject = "Checmis",
-        date = 0L,
-        duration = 2,
-        sessionSubjectId = 0,
-        sessionId = 0
-    ),
-    Session(
-        relatedToSubject = "Art",
-        date = 0L,
-        duration = 2,
-        sessionSubjectId = 0,
-        sessionId = 0
-    ),
-    Session(
-        relatedToSubject = "Sport",
-        date = 0L,
-        duration = 2,
-        sessionSubjectId = 0,
-        sessionId = 0
-    ),
-)

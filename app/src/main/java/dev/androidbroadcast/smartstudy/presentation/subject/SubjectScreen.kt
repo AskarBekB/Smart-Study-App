@@ -46,10 +46,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import dev.androidbroadcast.smartstudy.domain.model.Subject
 import dev.androidbroadcast.smartstudy.presentation.components.AddSubjectDialog
 import dev.androidbroadcast.smartstudy.presentation.components.CountCard
 import dev.androidbroadcast.smartstudy.presentation.components.DeleteDialog
@@ -57,8 +55,6 @@ import dev.androidbroadcast.smartstudy.presentation.components.studySessionsList
 import dev.androidbroadcast.smartstudy.presentation.components.taskList
 import dev.androidbroadcast.smartstudy.presentation.destinations.TaskScreenRouteDestination
 import dev.androidbroadcast.smartstudy.presentation.task.TaskScreenNavArgs
-import dev.androidbroadcast.smartstudy.sessions
-import dev.androidbroadcast.smartstudy.tasks
 import dev.androidbroadcast.smartstudy.util.SnackbarEvent
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest

@@ -52,8 +52,6 @@ import dev.androidbroadcast.smartstudy.presentation.components.DeleteDialog
 import dev.androidbroadcast.smartstudy.presentation.components.SubjectListBottomSheet
 import dev.androidbroadcast.smartstudy.presentation.components.TaskCheckBox
 import dev.androidbroadcast.smartstudy.presentation.components.TaskDatePicker
-import dev.androidbroadcast.smartstudy.presentation.theme.Red
-import dev.androidbroadcast.smartstudy.subjects
 import dev.androidbroadcast.smartstudy.util.Priority
 import dev.androidbroadcast.smartstudy.util.SnackbarEvent
 import dev.androidbroadcast.smartstudy.util.changMillisToDateString

@@ -1,6 +1,5 @@
 package dev.androidbroadcast.smartstudy.data.repository
 
-import androidx.lifecycle.LiveData
 import dev.androidbroadcast.smartstudy.data.local.SessionDao
 import dev.androidbroadcast.smartstudy.data.local.SubjectDao
 import dev.androidbroadcast.smartstudy.data.local.TaskDao
