@@ -78,4 +78,16 @@ dependencies {
     //compose destination
     val destinationVersion = "1.9.52"
     implementation("io.github.raamcosta.compose-destinations:core:$destinationVersion")
-    ksp("io.github.raamcosta.compose-destinations:ksp:$destinationVersion")}
+    ksp("io.github.raamcosta.compose-destinations:ksp:$destinationVersion")
+
+    val retrofit_version = "2.9.0"
+    val gson_version = "2.10.1"
+
+    //Retrofit + Gson
+    implementation("com.squareup.retrofit2:retrofit:$retrofit_version")
+    implementation("com.squareup.retrofit2:converter-gson:$retrofit_version")
+    implementation("com.google.code.gson:gson:$gson_version")
+
+//  Glide Accompanist for Compose
+    implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
+}

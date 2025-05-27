@@ -47,6 +47,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ramcosta.composedestinations.annotation.DeepLink
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import dev.androidbroadcast.smartstudy.presentation.components.ButtonsSection
 import dev.androidbroadcast.smartstudy.presentation.components.DeleteDialog
 import dev.androidbroadcast.smartstudy.presentation.components.SubjectListBottomSheet
 import dev.androidbroadcast.smartstudy.presentation.components.studySessionsList
@@ -288,7 +289,7 @@ private fun TimerSection(
             ) { hours ->
                 Text(
                     text = "$hours:",
-                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 45.sp)
+                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 35.sp)
                 )
             }
             AnimatedContent(
@@ -298,7 +299,7 @@ private fun TimerSection(
             ) { minutes ->
                 Text(
                     text = "$minutes:",
-                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 45.sp)
+                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 35.sp)
                 )
             }
             AnimatedContent(
@@ -308,7 +309,7 @@ private fun TimerSection(
             ) { seconds ->
                 Text(
                     text = seconds,
-                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 45.sp)
+                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 35.sp)
                 )
             }
         }
@@ -345,57 +346,6 @@ private fun RelatedToSubjectSection(
                     contentDescription = "Select Subject"
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun ButtonsSection(
-    modifier: Modifier,
-    startButtonClick: () -> Unit,
-    cancelButtonClick: () -> Unit,
-    finishButtonClick: () -> Unit,
-    timerState: TimerState,
-    seconds: String
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Button(
-            onClick = cancelButtonClick,
-            enabled = seconds != "00" && timerState != TimerState.STARTED
-        ) {
-            Text(
-                modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
-                text = "Cancel"
-            )
-        }
-        Button(
-            onClick = startButtonClick,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = if (timerState == TimerState.STARTED) Red
-                else MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.secondary
-            )
-        ) {
-            Text(
-                modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
-                text = when (timerState) {
-                    TimerState.STARTED -> "Stop"
-                    TimerState.STOPPED -> "Resume"
-                    else -> "Start"
-                }
-            )
-        }
-        Button(
-            onClick = finishButtonClick,
-            enabled = seconds != "00" && timerState != TimerState.STARTED
-        ) {
-            Text(
-                modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
-                text = "Finish"
-            )
         }
     }
 }

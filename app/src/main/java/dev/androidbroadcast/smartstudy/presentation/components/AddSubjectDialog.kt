@@ -81,7 +81,7 @@ fun AddSubjectDialog(
                                     .clip(CircleShape)
                                     .border(
                                         width = 1.dp,
-                                        color = if (colors == selectedColors) Color.Black
+                                        color = if (colors == selectedColors) Color.Green
                                         else Color.Transparent,
                                         shape = CircleShape
                                     )
