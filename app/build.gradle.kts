@@ -60,10 +60,13 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    //Navigation
+    implementation("androidx.navigation:navigation-compose:2.7.3")
+
     //Fonts:
     implementation("androidx.compose.ui:ui-text-google-fonts:1.8.1")
 
-//    //Hilt
+    //Hilt
     implementation("com.google.dagger:hilt-android:2.56.1")
     kapt("com.google.dagger:hilt-compiler:2.56.1")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
@@ -88,6 +91,10 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:$retrofit_version")
     implementation("com.google.code.gson:gson:$gson_version")
 
-//  Glide Accompanist for Compose
-    implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
+
+    // Coil (для Jetpack Compose)
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
+    // Optional: Logging
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 }
