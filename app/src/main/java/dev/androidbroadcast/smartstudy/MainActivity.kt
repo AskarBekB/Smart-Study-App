@@ -15,7 +15,6 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.navigation.NavDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -25,6 +24,7 @@ import com.ramcosta.composedestinations.navigation.dependency
 import dagger.hilt.android.AndroidEntryPoint
 import dev.androidbroadcast.smartstudy.presentation.NavGraphs
 import dev.androidbroadcast.smartstudy.presentation.components.DrawerContent
+import dev.androidbroadcast.smartstudy.presentation.destinations.BookScreenDestination
 import dev.androidbroadcast.smartstudy.presentation.destinations.DashboardScreenRouteDestination
 import dev.androidbroadcast.smartstudy.presentation.destinations.SessionScreenRouteDestination
 import dev.androidbroadcast.smartstudy.presentation.session.StudySessionTimerService
@@ -81,12 +81,12 @@ class MainActivity : ComponentActivity() {
             if (!isBound) return@setContent
 
             SmartStudyTheme {
-                // 1. NavController для детекции текущего экрана
+                // 1. NavController for detection screens
                 val navController = rememberNavController()
                 val backStack by navController.currentBackStackEntryAsState()
                 val currentDest: NavDestination? = backStack?.destination
 
-                // 2. Проверяем, находимся ли мы на DashboardScreen
+                // 2. Checks is we on Dashboard screen
                 val isOnDashboard = currentDest?.route == DashboardScreenRouteDestination.route
 
                 // 3. Если главная — показываем Drawer + общий TopAppBar
@@ -102,6 +102,9 @@ class MainActivity : ComponentActivity() {
                                     onSettingsClick = {
                                         startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
                                         scope.launch { drawerState.close() }
+                                    },
+                                    onBooksClick = {
+                                        navController.navigate(BookScreenDestination.route)
                                     }
                                 )
                             }

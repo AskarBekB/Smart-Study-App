@@ -2,11 +2,15 @@ package dev.androidbroadcast.smartstudy.di
 
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dev.androidbroadcast.smartstudy.data.remote.BookApi
+import dev.androidbroadcast.smartstudy.data.repository.BookRepositoryImpl
 import dev.androidbroadcast.smartstudy.data.repository.SessionRepositoryImpl
 import dev.androidbroadcast.smartstudy.data.repository.SubjectRepositoryImpl
 import dev.androidbroadcast.smartstudy.data.repository.TaskRepositoryImpl
+import dev.androidbroadcast.smartstudy.domain.repository.BookRepository
 import dev.androidbroadcast.smartstudy.domain.repository.SessionRepository
 import dev.androidbroadcast.smartstudy.domain.repository.SubjectRepository
 import dev.androidbroadcast.smartstudy.domain.repository.TaskRepository
