@@ -2,7 +2,6 @@ package dev.androidbroadcast.smartstudy.domain.model
 
 import androidx.room.Entity
 
-@Entity
 data class Book(
     val id: String,
     val title: String,

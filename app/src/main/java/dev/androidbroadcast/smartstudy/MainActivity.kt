@@ -8,20 +8,23 @@ import android.os.Bundle
 import android.os.IBinder
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
-import androidx.navigation.NavDestination
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.navigation.dependency
 import dagger.hilt.android.AndroidEntryPoint
+import dev.androidbroadcast.smartstudy.data.local.SettingsManager
 import dev.androidbroadcast.smartstudy.presentation.NavGraphs
 import dev.androidbroadcast.smartstudy.presentation.components.DrawerContent
 import dev.androidbroadcast.smartstudy.presentation.destinations.BookScreenDestination
@@ -43,6 +46,7 @@ class MainActivity : ComponentActivity() {
             timerService = binder.getService()
             isBound = true
         }
+
         override fun onServiceDisconnected(name: ComponentName?) {
             isBound = false
         }
@@ -50,8 +54,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
-        Intent(this, StudySessionTimerService::class.java).also { intent ->
-            bindService(intent, connection, BIND_AUTO_CREATE)
+        Intent(this, StudySessionTimerService::class.java).also {
+            bindService(it, connection, BIND_AUTO_CREATE)
         }
     }
 
@@ -61,7 +65,21 @@ class MainActivity : ComponentActivity() {
         isBound = false
     }
 
-    private fun requestPermission() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        requestNotificationPermission()
+
+        setContent {
+            val (darkTheme, fontScale) = rememberSettingsState()
+            if (!isBound) return@setContent
+
+            SmartStudyTheme(darkTheme = darkTheme, fontScale = fontScale) {
+                MainScaffold(timerService)
+            }
+        }
+    }
+
+    private fun requestNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ActivityCompat.requestPermissions(
                 this,
@@ -71,80 +89,91 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @Composable
+    private fun rememberSettingsState(): Pair<Boolean, Float> {
+        val context = LocalContext.current
+        val settingsManager = remember { SettingsManager(context) }
+
+        var isDarkTheme by remember { mutableStateOf(settingsManager.isDarkThemeEnabled()) }
+        var fontScale by remember { mutableStateOf(settingsManager.getFontScale()) }
+
+        val lifecycleOwner = LocalLifecycleOwner.current
+        DisposableEffect(Unit) {
+            val observer = LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_RESUME) {
+                    isDarkTheme = settingsManager.isDarkThemeEnabled()
+                    fontScale = settingsManager.getFontScale()
+                }
+            }
+            lifecycleOwner.lifecycle.addObserver(observer)
+            onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+        }
+
+        return isDarkTheme to fontScale
+    }
+
     @OptIn(ExperimentalMaterial3Api::class)
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        requestPermission()
+    @Composable
+    private fun MainScaffold(timerService: StudySessionTimerService) {
+        val navController = rememberNavController()
+        val backStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = backStackEntry?.destination?.route
 
-        setContent {
-            if (!isBound) return@setContent
+        val isOnDashboard = currentRoute == DashboardScreenRouteDestination.route
 
-            SmartStudyTheme {
-                // 1. NavController for detection screens
-                val navController = rememberNavController()
-                val backStack by navController.currentBackStackEntryAsState()
-                val currentDest: NavDestination? = backStack?.destination
+        if (isOnDashboard) {
+            val drawerState = rememberDrawerState(DrawerValue.Closed)
+            val scope = rememberCoroutineScope()
 
-                // 2. Checks is we on Dashboard screen
-                val isOnDashboard = currentDest?.route == DashboardScreenRouteDestination.route
-
-                // 3. Если главная — показываем Drawer + общий TopAppBar
-                if (isOnDashboard) {
-                    val drawerState = rememberDrawerState(DrawerValue.Closed)
-                    val scope = rememberCoroutineScope()
-
-                    ModalNavigationDrawer(
-                        drawerState = drawerState,
-                        drawerContent = {
-                            ModalDrawerSheet {
-                                DrawerContent(
-                                    onSettingsClick = {
-                                        startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
-                                        scope.launch { drawerState.close() }
-                                    },
-                                    onBooksClick = {
-                                        navController.navigate(BookScreenDestination.route)
-                                    }
-                                )
+            ModalNavigationDrawer(
+                drawerState = drawerState,
+                drawerContent = {
+                    ModalDrawerSheet {
+                        DrawerContent(
+                            onSettingsClick = {
+                                startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
+                                scope.launch { drawerState.close() }
+                            },
+                            onBooksClick = {
+                                navController.navigate(BookScreenDestination.route)
                             }
-                        }
-                    ) {
-                        Scaffold(
-                            topBar = {
-                                TopAppBar(
-                                    title = { Text("Smart Study") },
-                                    navigationIcon = {
-                                        IconButton(onClick = {
-                                            scope.launch { drawerState.open() }
-                                        }) {
-                                            Icon(Icons.Default.Menu, contentDescription = "Menu")
-                                        }
-                                    }
-                                )
-                            }
-                        ) { padding ->
-                            DestinationsNavHost(
-                                navController = navController,
-                                navGraph = NavGraphs.root,
-                                modifier = Modifier.padding(padding),
-                                dependenciesContainerBuilder = {
-                                    dependency(SessionScreenRouteDestination) { timerService }
-                                }
-                            )
-                        }
+                        )
                     }
-                } else {
-                    // 4. Во всех остальных случаях — просто хост навигации без Drawer/Scaffold
+                }
+            ) {
+                Scaffold(
+                    topBar = {
+                        TopAppBar(
+                            title = { Text("Study Smart") },
+                            navigationIcon = {
+                                IconButton(onClick = {
+                                    scope.launch { drawerState.open() }
+                                }) {
+                                    Icon(Icons.Default.Menu, contentDescription = "Menu")
+                                }
+                            }
+                        )
+                    }
+                ) { padding ->
                     DestinationsNavHost(
                         navController = navController,
                         navGraph = NavGraphs.root,
+                        modifier = Modifier.padding(padding),
                         dependenciesContainerBuilder = {
                             dependency(SessionScreenRouteDestination) { timerService }
                         }
                     )
                 }
             }
+        } else {
+            DestinationsNavHost(
+                navController = navController,
+                navGraph = NavGraphs.root,
+                dependenciesContainerBuilder = {
+                    dependency(SessionScreenRouteDestination) { timerService }
+                }
+            )
         }
     }
 }
+

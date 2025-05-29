@@ -10,4 +10,8 @@ object Constants {
     const val NOTIFICATION_ID = 7
 
     const val CLICK_REQUEST_CODE = 100
+
+    const val KEY_NOTIFICATIONS = "enable_notifications"
+    const val KEY_DARK_THEME = "dark_theme"
+    const val KEY_FONT_SCALE = "font_scale"
 }

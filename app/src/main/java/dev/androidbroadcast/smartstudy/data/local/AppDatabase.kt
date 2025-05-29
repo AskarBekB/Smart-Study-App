@@ -3,6 +3,7 @@ package dev.androidbroadcast.smartstudy.data.local
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import dev.androidbroadcast.smartstudy.domain.model.Book
 import dev.androidbroadcast.smartstudy.domain.model.Session
 import dev.androidbroadcast.smartstudy.domain.model.Subject
 import dev.androidbroadcast.smartstudy.domain.model.Task
