@@ -9,6 +9,7 @@ import android.os.Build
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
 import dagger.hilt.android.AndroidEntryPoint
+import dev.androidbroadcast.smartstudy.data.local.SettingsManager
 import dev.androidbroadcast.smartstudy.util.Constants.NOTIFICATION_CHANNEL_ID
 import dev.androidbroadcast.smartstudy.util.Constants.NOTIFICATION_CHANNEL_NAME
 import dev.androidbroadcast.smartstudy.util.Constants.ACTION_SERVICE_STOP
@@ -71,6 +72,9 @@ class StudySessionTimerService : Service() {
     }
 
     private fun startForegroundService() {
+        val settingsManager = SettingsManager(applicationContext)
+        if (!settingsManager.isNotificationsEnabled()) return
+
         createNotificationChannel()
         startForeground(NOTIFICATION_ID, notificationBuilder.build())
     }
@@ -95,6 +99,9 @@ class StudySessionTimerService : Service() {
     }
 
     private fun updateNotification(hours: String, minutes: String, seconds: String) {
+        val settingsManager = SettingsManager(applicationContext)
+        if (!settingsManager.isNotificationsEnabled()) return
+
         notificationManager.notify(
             NOTIFICATION_ID,
             notificationBuilder
