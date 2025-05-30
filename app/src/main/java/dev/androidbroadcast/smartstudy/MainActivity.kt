@@ -144,7 +144,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     topBar = {
                         TopAppBar(
-                            title = { Text("Study Smart") },
+                            title = { Text("StudySmart") },
                             navigationIcon = {
                                 IconButton(onClick = {
                                     scope.launch { drawerState.open() }

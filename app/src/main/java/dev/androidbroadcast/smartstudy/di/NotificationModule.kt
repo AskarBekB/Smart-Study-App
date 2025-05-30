@@ -25,9 +25,9 @@ object NotificationModule {
     ): NotificationCompat.Builder {
         return NotificationCompat
             .Builder(context, NOTIFICATION_CHANNEL_ID)
-            .setContentTitle("Study Session")
+            .setContentTitle("Session")
             .setContentText("00:00:00")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.drawable.logo)
             .setOngoing(true)
             .setContentIntent(ServiceHelper.clickPendingIntent(context))
     }
