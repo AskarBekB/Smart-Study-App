@@ -25,6 +25,7 @@ fun BookScreen(
 ) {
     val books = viewModel.books.value
     val loading = viewModel.isLoading.value
+    val errorMessage = viewModel.errorMessage.value
 
     Scaffold(
         topBar = {
@@ -38,40 +39,48 @@ fun BookScreen(
             )
         }
     ) { padding ->
-        if (loading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-            ) {
-                items(books) { book ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                    ) {
-                        Row(modifier = Modifier.padding(12.dp)) {
-                            if (book.thumbnail.isNotEmpty()) {
-                                Image(
-                                    painter = rememberAsyncImagePainter(book.thumbnail),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(64.dp)
-                                        .padding(end = 12.dp)
-                                )
-                            }
-                            Column {
-                                Text(text = book.title, style = MaterialTheme.typography.titleMedium)
-                                Text(text = book.authors, style = MaterialTheme.typography.bodySmall)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+            contentAlignment = Alignment.Center
+        ) {
+            when {
+                loading -> {
+                    CircularProgressIndicator()
+                }
+
+                errorMessage != null -> {
+                    Text(
+                        text = errorMessage,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+
+                else -> {
+                    LazyColumn {
+                        items(books) { book ->
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp)
+                            ) {
+                                Row(modifier = Modifier.padding(12.dp)) {
+                                    if (book.thumbnail.isNotEmpty()) {
+                                        Image(
+                                            painter = rememberAsyncImagePainter(book.thumbnail),
+                                            contentDescription = null,
+                                            modifier = Modifier
+                                                .size(64.dp)
+                                                .padding(end = 12.dp)
+                                        )
+                                    }
+                                    Column {
+                                        Text(text = book.title, style = MaterialTheme.typography.titleMedium)
+                                        Text(text = book.authors, style = MaterialTheme.typography.bodySmall)
+                                    }
+                                }
                             }
                         }
                     }

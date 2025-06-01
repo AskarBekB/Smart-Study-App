@@ -20,10 +20,18 @@ class BookViewModel @Inject constructor(
     var isLoading = mutableStateOf(true)
         private set
 
+    var errorMessage = mutableStateOf<String?>(null)
+        private set
+
     init {
         viewModelScope.launch {
-            books.value = repo.getStudyBooks()
-            isLoading.value = false
+            try {
+                books.value = repo.getStudyBooks()
+            } catch (e: Exception) {
+                errorMessage.value = "Please! Check you internet connection"
+            } finally {
+                isLoading.value = false
+            }
         }
     }
 }
