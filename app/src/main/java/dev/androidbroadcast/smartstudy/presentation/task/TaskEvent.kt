@@ -12,5 +12,4 @@ sealed class TaskEvent {
     data object OnIsCompleteChange : TaskEvent()
     data object SaveTask : TaskEvent()
     data object DeleteTask : TaskEvent()
-
 }
